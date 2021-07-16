@@ -20,7 +20,7 @@ export default async (request: NextApiRequest, response: NextApiResponse) => {
 
   if (request.method === 'POST') {
 
-    const sessions = await getSession({ request });
+    const sessions = await getSession({ req: request });
 
     const user = await fauna.query<User>(
       query.Get(
@@ -40,7 +40,7 @@ export default async (request: NextApiRequest, response: NextApiResponse) => {
 
       await fauna.query(
         query.Update(
-          query.Ref(query.Collection('user'), user.ref.id), {
+          query.Ref(query.Collection('users'), user.ref.id), {
             data: {
               stripe_customer_id: stripeCustomer.id
             }
@@ -65,7 +65,7 @@ export default async (request: NextApiRequest, response: NextApiResponse) => {
       cancel_url: process.env.STRIPE_CANCEL_URL
     })
 
-    return response.status(200).json({ sessionId: stripeCheckoutSession })
+    return response.status(200).json({ sessionId: stripeCheckoutSession.id })
   } else {
     response.setHeader('Allow', 'POST')
     response.status(405).end('Method not allowed')
