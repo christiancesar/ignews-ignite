@@ -4,25 +4,21 @@ import { api } from '../../services/api';
 import { getStripeJs } from '../../services/stripe-frontend';
 import style from './styles.module.scss';
 
-interface SubscripteButtonProps {
-  priceId: string;
-}
-
-export function SubscribeButton({ priceId }: SubscripteButtonProps) {
+export function SubscribeButton() {
   const [session] = useSession();
   const router = useRouter();
-  
+
   async function handleSubscribe() {
     if (!session) {
       signIn('github')
       return;
     }
 
-    if(session.activeSubscription) {
+    if (session.activeSubscription) {
       router.push('/posts')
       return;
     }
-    
+
     try {
       const response = await api.post('/subscribe');
 
